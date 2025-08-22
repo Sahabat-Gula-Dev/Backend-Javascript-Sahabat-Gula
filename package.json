@@ -1,0 +1,23 @@
+{
+  "name": "backend-javascript-sahabat-gula",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start-dev": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@hapi/hapi": "^21.4.3",
+    "@supabase/supabase-js": "^2.56.0",
+    "dotenv": "^17.2.1",
+    "joi": "^18.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "nodemon": "^3.1.10",
+    "otp-generator": "^4.0.1",
+    "resend": "^6.0.1"
+  }
+}
