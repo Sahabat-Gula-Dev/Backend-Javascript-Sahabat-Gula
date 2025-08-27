@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import InvariantError from '../exceptions/InvariantError.js';
 
 const TokenManager = {
   createAccessToken: (payload) => {
@@ -16,7 +17,7 @@ const TokenManager = {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       return decoded;
     } catch (error) {
-      throw new Error('Invalid access token');
+      throw new InvariantError('Invalid access token');
     }
   },
 
@@ -25,7 +26,7 @@ const TokenManager = {
       const decoded = jwt.verify(token, process.env.REFRESH_JWT_SECRET);
       return decoded;
     } catch (error) {
-      throw new Error('Invalid access token');
+      throw new InvariantError('Invalid refresh token');
     }
   },
 }
