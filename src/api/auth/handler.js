@@ -34,6 +34,7 @@ class AuthHandler {
     );
     const accessToken = this._tokenManager.createAccessToken(userData);
     const refreshToken = this._tokenManager.createRefreshToken(userData);
+    await this._service.saveRefreshToken(refreshToken, userData.id);
     return {
       status: "success",
       message: "OTP verified successfully",
@@ -48,6 +49,7 @@ class AuthHandler {
     const userData = await this._service.loginUser(request.payload);
     const accessToken = this._tokenManager.createAccessToken(userData);
     const refreshToken = this._tokenManager.createRefreshToken(userData);
+    await this._service.saveRefreshToken(refreshToken, userData.id);
     return {
       status: "success",
       message: "Login successful",
@@ -63,6 +65,7 @@ class AuthHandler {
       .supabaseAccessToken;
     const accessToken = this._tokenManager.createAccessToken(userData);
     const refreshToken = this._tokenManager.createRefreshToken(userData);
+    await this._service.saveRefreshToken(refreshToken, userData.id);
     return {
       status: "success",
       message: "Google authentication successful",
@@ -75,6 +78,7 @@ class AuthHandler {
 
   async postRefreshTokenHandler(request, h) {
     const { refreshToken } = request.payload;
+    await this._service.verifyRefreshTokenInDb(refreshToken);
     const userData = this._tokenManager.verifyRefreshToken(refreshToken);
     const newAccessToken = this._tokenManager.createAccessToken(userData);
     return {
@@ -111,7 +115,61 @@ class AuthHandler {
       })
       .code(201);
   }
-}
 
+  async postForgotPasswordHandler(request, h) {
+    const { email } = request.payload;
+    await this._service.requestPasswordReset(email);
+    return {
+      status: "success",
+      message: "Password reset email sent",
+    };
+  }
+
+  async postVerifyResetOtpHandler(request, h) {
+    const { id } = await this._service.verifyPasswordResetOtp(request.payload);
+    const resetToken = this._tokenManager.createAccessToken({
+      id,
+      scope: "reset-password",
+    });
+    return {
+      status: "success",
+      message: "Reset token created successfully",
+      data: {
+        resetToken,
+      },
+    };
+  }
+
+  async postResetPasswordHandler(request, h) {
+    const { resetToken, newPassword } = request.payload;
+    const { id, scope } = this._tokenManager.verifyAccessToken(resetToken);
+    if (scope !== "reset-password") {
+      throw new InvariantError("Invalid token scope");
+    }
+    await this._service.resetPassword(id, newPassword);
+    return {
+      status: "success",
+      message: "Password reset successfully",
+    };
+  }
+
+  async postLogoutUserHandler(request, h) {
+    const { refreshToken } = request.payload;
+    await this._service.logoutUser(refreshToken);
+    return {
+      status: "success",
+      message: "User logged out successfully",
+    };
+  }
+
+  async deleteUserAccountHandler(request, h) {
+    const userId = request.auth.credentials.id;
+    await this._service.deleteUserAccount(userId);
+    return {
+      status: "success",
+      message: "User account deleted successfully",
+    };
+  }
+}
 
 export default AuthHandler;

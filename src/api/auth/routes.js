@@ -1,6 +1,7 @@
 import AuthValidator from "../../validator/auth/index.js";
 
 const routes = (handler) => [
+  // for user registration
   {
     method: "POST",
     path: "/auth/register",
@@ -11,6 +12,8 @@ const routes = (handler) => [
       },
     },
   },
+
+  // for OTP verification
   {
     method: "POST",
     path: "/auth/verify-otp",
@@ -21,6 +24,8 @@ const routes = (handler) => [
       },
     },
   },
+
+  // for user login
   {
     method: "POST",
     path: "/auth/login",
@@ -31,6 +36,8 @@ const routes = (handler) => [
       },
     },
   },
+
+  // for Google authentication
   {
     method: "POST",
     path: "/auth/google",
@@ -41,6 +48,8 @@ const routes = (handler) => [
       },
     },
   },
+
+  // for token refresh
   {
     method: "POST",
     path: "/auth/refresh-token",
@@ -51,6 +60,8 @@ const routes = (handler) => [
       },
     },
   },
+
+  // for creating the first admin
   {
     method: "POST",
     path: "/auth/create-first-admin",
@@ -61,6 +72,8 @@ const routes = (handler) => [
       },
     },
   },
+
+  // for creating an admin
   {
     method: "POST",
     path: "/auth/create-admin",
@@ -70,6 +83,49 @@ const routes = (handler) => [
       validate: {
         payload: AuthValidator.AdminRegisterPayloadSchema,
       },
+    },
+  },
+
+  // for forgot password
+  {
+    method: "POST",
+    path: "/auth/forgot-password",
+    handler: handler.postForgotPasswordHandler,
+    options: { validate: { payload: ForgotPasswordPayloadSchema } },
+  },
+
+  // for verifying reset password OTP
+  {
+    method: "POST",
+    path: "/auth/verify-reset-otp",
+    handler: handler.postVerifyResetOtpHandler,
+    options: { validate: { payload: VerifyResetOtpPayloadSchema } },
+  },
+
+  // for resetting password
+  {
+    method: "POST",
+    path: "/auth/reset-password",
+    handler: handler.postResetPasswordHandler,
+    options: { validate: { payload: ResetPasswordPayloadSchema } },
+  },
+
+  // for user logout
+  {
+    method: "POST",
+    path: "/auth/logout",
+    handler: handler.postLogoutUserHandler,
+    options: { validate: { payload: LogoutPayloadSchema } },
+  },
+
+  // for deleting user account
+  {
+    method: "DELETE",
+    path: "/users/me",
+    handler: handler.deleteUserAccountHandler,
+    options: {
+      auth: "jwt",
+      description: "Delete user account successfully",
     },
   },
 ];

@@ -51,7 +51,7 @@ class AuthService {
       email,
       password,
       email_confirm: false,
-      user_meta_data: { username },
+      user_meta_data: { username: username },
     });
 
     if (createError) {
@@ -65,7 +65,7 @@ class AuthService {
       specialChars: false,
       lowerCaseAlphabets: false,
     });
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+    const expiresAt = new Date(Date.now() + 60 * 1000); // 1 minute from now
 
     const { error: updateError } = await this._supabaseAdmin
       .from("profiles")
@@ -200,7 +200,7 @@ class AuthService {
         email,
         password,
         email_confirm: true,
-        user_meta_data: { username },
+        user_meta_data: { username: username },
       });
 
     if (createError) {
@@ -230,7 +230,7 @@ class AuthService {
       email,
       password,
       email_confirm: true,
-      user_meta_data: { username },
+      user_meta_data: { username: username },
     });
     if (createError) throw new InvariantError(createError.message);
 
@@ -238,6 +238,127 @@ class AuthService {
       .from("profiles")
       .update({ role: "admin", is_active: true })
       .eq("id", user.id);
+  }
+
+  async requestPasswordReset(email) {
+    const {
+      data: { user },
+      error: userError,
+    } = await this._supabaseAdmin.auth.admin.getUserByEmail(email);
+
+    if (userError) {
+      throw new NotFoundError("User not found");
+    }
+
+    const { error: resetError } =
+      await this._supabaseAdmin.auth.api.resetPasswordForEmail(email);
+
+    if (resetError) {
+      throw new InvariantError(
+        "Failed to send password reset email: " + resetError.message
+      );
+    }
+
+    if (user) {
+      const otp = otpGenerator.generate(6, {
+        upperCase: false,
+        specialChars: false,
+        lowerCaseAlphabets: false,
+      });
+      const expiresAt = new Date(Date.now() + 60 * 1000); // 1 minute from now
+
+      await this._supabaseAdmin
+        .from("profiles")
+        .update({ reset_otp: otp, reset_otp_expires_at: expiresAt })
+        .eq("id", user.id);
+
+      await this._resend.emails.send({
+        to: user.email,
+        subject: "Password Reset OTP",
+        html: `<p>Your OTP is: <strong>${otp}</strong></p>`,
+      });
+    }
+  }
+
+  async verifyPasswordResetOtp({ email, otp }) {
+    const {
+      data: { user },
+    } = await this._supabaseAdmin.auth.admin.getUserByEmail(email);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    const { data: profile } = await this._supabaseAdmin
+      .from("profiles")
+      .select("reset_otp, reset_otp_expires_at")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile) {
+      throw new NotFoundError("Profile not found");
+    }
+
+    if (profile.reset_otp !== otp) {
+      throw new InvariantError("Invalid OTP");
+    }
+
+    if (profile.reset_otp_expires_at < new Date()) {
+      throw new InvariantError("OTP has expired");
+    }
+
+    await this._supabaseAdmin
+      .from("profiles")
+      .update({ reset_otp: null, reset_otp_expires_at: null })
+      .eq("id", user.id);
+
+    return { id: user.id };
+  }
+
+  async resetPassword({ userId, newPassword }) {
+    const { error: updateError } =
+      await this._supabaseAdmin.auth.admin.updateUserById(userId, {
+        password: newPassword,
+      });
+
+    if (updateError) {
+      throw new InvariantError(
+        "Failed to reset password: " + updateError.message
+      );
+    }
+  }
+
+  async saveRefreshToken(token, userId) {
+    await this._supabase
+      .from("refresh_tokens")
+      .insert({ token, user_id: userId });
+  }
+
+  async verifyRefreshTokenInDb(token) {
+    const { data, error } = await this._supabase
+      .from("refresh_tokens")
+      .select("token")
+      .eq("token", token)
+      .single();
+
+    if (error) {
+      throw new InvariantError(
+        "Failed to verify refresh token: " + error.message
+      );
+    }
+  }
+
+  async logoutUser(refreshToken) {
+    await this._supabase
+      .from("refresh_tokens")
+      .delete()
+      .eq("token", refreshToken);
+  }
+
+  async deleteUser(userId) {
+    const { error } = await this._supabaseAdmin.auth.admin.deleteUser(userId);
+    if (error) {
+      throw new InvariantError("Failed to delete user: " + error.message);
+    }
   }
 }
 

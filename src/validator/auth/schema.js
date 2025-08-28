@@ -27,10 +27,32 @@ const FirstAdminPayloadSchema = Joi.object({
   adminKey: Joi.string().required(),
 });
 
+const ForgotPasswordPayloadSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
+const VerifyResetOtpPayloadSchema = Joi.object({
+  email: Joi.string().email().required(),
+  otp: Joi.string().length(6).required(),
+});
+
+const ResetPasswordPayloadSchema = Joi.object({
+  email: Joi.string().email().required(),
+  newPassword: Joi.string().min(6).required(),
+});
+
+const LogoutPayloadSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
 export {
   UserRegisterPayloadSchema,
   UserLoginPayloadSchema,
   VerifyOtpPayloadSchema,
+  ForgotPasswordPayloadSchema,
   GoogleAuthPayloadSchema,
   FirstAdminPayloadSchema,
+  VerifyResetOtpPayloadSchema,
+  ResetPasswordPayloadSchema,
+  LogoutPayloadSchema,
 };
