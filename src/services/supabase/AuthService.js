@@ -19,6 +19,7 @@ class AuthService {
     this._resend = new Resend(process.env.RESEND_API_KEY);
   }
 
+  // for getting user profile
   async _getUserProfile(userId) {
     const { data: profile, error } = await this._supabaseAdmin
       .from("profiles")
@@ -166,7 +167,7 @@ class AuthService {
 
     const { data: profile, error: profileError } = await this._supabaseAdmin
       .from("profiles")
-      .select({ is_active: true })
+      .update({ is_active: true })
       .eq("id", user.id)
       .single();
 
@@ -245,19 +246,6 @@ class AuthService {
       data: { user },
       error: userError,
     } = await this._supabaseAdmin.auth.admin.getUserByEmail(email);
-
-    if (userError) {
-      throw new NotFoundError("User not found");
-    }
-
-    const { error: resetError } =
-      await this._supabaseAdmin.auth.api.resetPasswordForEmail(email);
-
-    if (resetError) {
-      throw new InvariantError(
-        "Failed to send password reset email: " + resetError.message
-      );
-    }
 
     if (user) {
       const otp = otpGenerator.generate(6, {
