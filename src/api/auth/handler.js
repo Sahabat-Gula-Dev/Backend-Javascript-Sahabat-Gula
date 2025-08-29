@@ -8,8 +8,7 @@ class AuthHandler {
 
     this.postRegisterUserHandler = this.postRegisterUserHandler.bind(this);
     this.postVerifyOtpHandler = this.postVerifyOtpHandler.bind(this);
-    this.postResendActivationOtpHandler =
-      this.postResendActivationOtpHandler.bind(this);
+    this.postResendOtpHandler = this.postResendOtpHandler.bind(this);
     this.postLoginUserHandler = this.postLoginUserHandler.bind(this);
     this.postGoogleAuthHandler = this.postGoogleAuthHandler.bind(this);
     this.postRefreshTokenHandler = this.postRefreshTokenHandler.bind(this);
@@ -48,7 +47,7 @@ class AuthHandler {
     };
   }
 
-  async postResendActivationOtpHandler(request, h) {
+  async postResendOtpHandler(request, h) {
     const { email } = request.payload;
     await this._service.resendActivationOtp(email);
     return {
