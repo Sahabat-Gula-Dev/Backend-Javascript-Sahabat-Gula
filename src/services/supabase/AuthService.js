@@ -85,12 +85,11 @@ class AuthService {
   }
 
   async verifyOtpAndActiveUser({ email, otp }) {
-    const { data: user, error: userError } =
-      await this._supabaseAdmin.auth.admin
-        .from("users")
-        .select("id")
-        .in("email", [email])
-        .limit(1);
+    const { data: user, error: userError } = await this._supabaseAdmin
+      .from("users")
+      .select("id")
+      .in("email", [email])
+      .limit(1);
     if (userError || !user) {
       throw new NotFoundError("User not found");
     }
@@ -249,7 +248,7 @@ class AuthService {
     const {
       data: { user },
       error: userError,
-    } = await this._supabaseAdmin.auth.admin
+    } = await this._supabaseAdmin
       .from("users")
       .select("id, email")
       .in("email", [email])
@@ -279,7 +278,7 @@ class AuthService {
   async verifyPasswordResetOtp({ email, otp }) {
     const {
       data: { user },
-    } = await this._supabaseAdmin.auth.admin
+    } = await this._supabaseAdmin
       .from("users")
       .select("id, email")
       .in("email", [email])
