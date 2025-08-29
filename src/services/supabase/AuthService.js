@@ -86,7 +86,11 @@ class AuthService {
 
   async verifyOtpAndActiveUser({ email, otp }) {
     const { data: user, error: userError } =
-      await this._supabaseAdmin.auth.admin.getUserByEmail(email);
+      await this._supabaseAdmin.auth.admin
+        .from("users")
+        .select("id")
+        .in("email", [email])
+        .limit(1);
     if (userError || !user) {
       throw new NotFoundError("User not found");
     }
@@ -184,7 +188,7 @@ class AuthService {
 
   async createFirstAdmin({ username, email, password }) {
     const { data: admins, error: findError } = await this._supabaseAdmin
-      .from("profiles")
+      .from("users")
       .select("id")
       .eq("role", "admin");
 
@@ -245,7 +249,11 @@ class AuthService {
     const {
       data: { user },
       error: userError,
-    } = await this._supabaseAdmin.auth.admin.getUserByEmail(email);
+    } = await this._supabaseAdmin.auth.admin
+      .from("users")
+      .select("id, email")
+      .in("email", [email])
+      .limit(1);
 
     if (user) {
       const otp = otpGenerator.generate(6, {
@@ -271,7 +279,11 @@ class AuthService {
   async verifyPasswordResetOtp({ email, otp }) {
     const {
       data: { user },
-    } = await this._supabaseAdmin.auth.admin.getUserByEmail(email);
+    } = await this._supabaseAdmin.auth.admin
+      .from("users")
+      .select("id, email")
+      .in("email", [email])
+      .limit(1);
     if (!user) {
       throw new NotFoundError("User not found");
     }
