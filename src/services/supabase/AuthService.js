@@ -93,14 +93,16 @@ class AuthService {
   }
 
   async verifyOtpAndActiveUser({ email, otp }) {
-    const { data: user, error: userError } = await this._supabaseAdmin
+    const { data: users, error: findError } = await this._supabaseAdmin
       .from("users")
       .select("id")
       .in("email", [email])
       .limit(1);
-    if (userError || !user) {
-      throw new NotFoundError("User not found");
+
+    if (findError || users.length === 0) {
+      throw new NotFoundError("User with this email not found");
     }
+    const user = users[0];
 
     const { data: profile, error: profileError } = await this._supabase
       .from("profiles")
@@ -109,15 +111,15 @@ class AuthService {
       .single();
 
     if (profileError || !profile) {
-      throw new NotFoundError("Profile not found");
+      throw new NotFoundError("Profile for this user not found.");
     }
 
     if (profile.activation_otp !== otp) {
-      throw new AuthenticationError("Invalid OTP");
+      throw new AuthenticationError("Invalid OTP code.");
     }
 
-    if (new Date() > profile.activation_otp_expires_at) {
-      throw new AuthenticationError("OTP expired");
+    if (new Date() > new Date(profile.activation_otp_expires_at)) {
+      throw new AuthenticationError("OTP code has expired.");
     }
 
     const { error: updateError } = await this._supabaseAdmin
@@ -128,10 +130,9 @@ class AuthService {
         activation_otp_expires_at: null,
       })
       .eq("id", user.id);
+
     if (updateError) {
-      throw new InvariantError(
-        "Failed to activate user: " + updateError.message
-      );
+      throw new InvariantError("Failed to activate user account.");
     }
 
     return this._getUserProfile(user.id);
@@ -165,7 +166,7 @@ class AuthService {
       specialChars: false,
       lowerCaseAlphabets: false,
     });
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 menit
+    const expiresAt = new Date(Date.now() + 60 * 1000); // 1 menit
 
     const { error: updateError } = await this._supabaseAdmin
       .from("profiles")
@@ -297,22 +298,21 @@ class AuthService {
   }
 
   async requestPasswordReset(email) {
-    const {
-      data: { user },
-      error: userError,
-    } = await this._supabaseAdmin
+    const { data: users, error: userError } = await this._supabaseAdmin
       .from("users")
       .select("id, email")
       .in("email", [email])
       .limit(1);
 
-    if (user) {
+    if (!userError && users.length > 0) {
+      const user = users[0];
+
       const otp = otpGenerator.generate(6, {
         upperCase: false,
         specialChars: false,
         lowerCaseAlphabets: false,
       });
-      const expiresAt = new Date(Date.now() + 60 * 1000); // 1 minute from now
+      const expiresAt = new Date(Date.now() + 60 * 1000); // 1 menit
 
       await this._supabaseAdmin
         .from("profiles")
@@ -320,6 +320,7 @@ class AuthService {
         .eq("id", user.id);
 
       await this._resend.emails.send({
+        from: "Sahabat Gula <noreply@sahabatgula.com>",
         to: user.email,
         subject: "Password Reset OTP",
         html: `<p>Your OTP is: <strong>${otp}</strong></p>`,
@@ -328,16 +329,16 @@ class AuthService {
   }
 
   async verifyPasswordResetOtp({ email, otp }) {
-    const {
-      data: { user },
-    } = await this._supabaseAdmin
+    const { data: users, error: userError } = await this._supabaseAdmin
       .from("users")
-      .select("id, email")
+      .select("id")
       .in("email", [email])
       .limit(1);
-    if (!user) {
+
+    if (userError || users.length === 0) {
       throw new NotFoundError("User not found");
     }
+    const user = users[0];
 
     const { data: profile } = await this._supabaseAdmin
       .from("profiles")
