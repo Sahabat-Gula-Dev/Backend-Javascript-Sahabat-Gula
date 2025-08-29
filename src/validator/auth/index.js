@@ -2,13 +2,17 @@ import {
   UserRegisterPayloadSchema,
   UserLoginPayloadSchema,
   VerifyOtpPayloadSchema,
+  ForgotPasswordPayloadSchema,
   GoogleAuthPayloadSchema,
   FirstAdminPayloadSchema,
+  VerifyResetOtpPayloadSchema,
+  ResetPasswordPayloadSchema,
+  LogoutPayloadSchema,
 } from "./schema.js";
 
 import InvariantError from "../../exceptions/InvariantError.js";
 
-const AuthValidator ={
+const AuthValidator = {
   validateUserRegisterPayload: (payload) => {
     const { error } = UserRegisterPayloadSchema.validate(payload);
     if (error) throw new InvariantError(error.message);
@@ -33,6 +37,26 @@ const AuthValidator ={
     const { error } = FirstAdminPayloadSchema.validate(payload);
     if (error) throw new InvariantError(error.message);
   },
-}
+
+  validateForgotPasswordPayload: (payload) => {
+    const { error } = ForgotPasswordPayloadSchema.validate(payload);
+    if (error) throw new InvariantError(error.message);
+  },
+
+  validateVerifyResetOtpPayload: (payload) => {
+    const { error } = VerifyResetOtpPayloadSchema.validate(payload);
+    if (error) throw new InvariantError(error.message);
+  },
+
+  validateResetPasswordPayload: (payload) => {
+    const { error } = ResetPasswordPayloadSchema.validate(payload);
+    if (error) throw new InvariantError(error.message);
+  },
+
+  validateLogoutPayload: (payload) => {
+    const { error } = LogoutPayloadSchema.validate(payload);
+    if (error) throw new InvariantError(error.message);
+  },
+};
 
 export default AuthValidator;
