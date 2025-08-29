@@ -19,7 +19,7 @@ class AuthHandler {
   }
 
   async postRegisterUserHandler(request, h) {
-    console.log(request.payload)
+    console.log(request.payload);
     const { username, email, password } = request.payload;
     await this._service.registerUser({ username, email, password });
     return h
@@ -48,7 +48,7 @@ class AuthHandler {
     };
   }
 
-  async postResendOtpHandler(request, h) {
+  async postResendActivationOtpHandler(request, h) {
     const { email } = request.payload;
     await this._service.resendActivationOtp(email);
     return {
