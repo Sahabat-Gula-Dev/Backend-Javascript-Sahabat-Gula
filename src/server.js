@@ -8,7 +8,6 @@ import AuthenticationError from "./exceptions/AuthenticationError.js";
 // for auth
 import auth from "./api/auth/index.js";
 import AuthService from "./services/supabase/AuthService.js";
-import AuthValidator from "./validator/auth/index.js";
 import TokenManager from "./tokenize/TokenManager.js";
 
 dotenv.config();
@@ -56,7 +55,6 @@ const init = async () => {
     options: {
       service: authService,
       tokenManager: TokenManager,
-      validator: AuthValidator,
     },
   });
 
