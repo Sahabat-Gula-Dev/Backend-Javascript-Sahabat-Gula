@@ -1,4 +1,4 @@
-import AuthValidator from "../../validator/auth/index.js";
+import * as AuthSchemas from "../../validator/auth/schema.js";
 
 const routes = (handler) => [
   // for user registration
@@ -8,7 +8,7 @@ const routes = (handler) => [
     handler: handler.postRegisterUserHandler,
     options: {
       validate: {
-        payload: AuthValidator.UserRegisterPayloadSchema,
+        payload: AuthSchemas.UserRegisterPayloadSchema, 
       },
     },
   },
@@ -20,7 +20,7 @@ const routes = (handler) => [
     handler: handler.postVerifyOtpHandler,
     options: {
       validate: {
-        payload: AuthValidator.VerifyOtpPayloadSchema,
+        payload: AuthSchemas.VerifyOtpPayloadSchema, 
       },
     },
   },
@@ -32,7 +32,7 @@ const routes = (handler) => [
     handler: handler.postLoginUserHandler,
     options: {
       validate: {
-        payload: AuthValidator.UserLoginPayloadSchema,
+        payload: AuthSchemas.UserLoginPayloadSchema, 
       },
     },
   },
@@ -44,7 +44,7 @@ const routes = (handler) => [
     handler: handler.postGoogleAuthHandler,
     options: {
       validate: {
-        payload: AuthValidator.GoogleAuthPayloadSchema,
+        payload: AuthSchemas.GoogleAuthPayloadSchema, 
       },
     },
   },
@@ -56,7 +56,7 @@ const routes = (handler) => [
     handler: handler.postRefreshTokenHandler,
     options: {
       validate: {
-        payload: AuthValidator.RefreshTokenPayloadSchema,
+        payload: AuthSchemas.RefreshTokenPayloadSchema, 
       },
     },
   },
@@ -64,11 +64,11 @@ const routes = (handler) => [
   // for creating the first admin
   {
     method: "POST",
-    path: "/auth/create-first-admin",
+    path: "/admin/register-first",  
     handler: handler.postCreateFirstAdminHandler,
     options: {
       validate: {
-        payload: AuthValidator.FirstAdminPayloadSchema,
+        payload: AuthSchemas.FirstAdminPayloadSchema,  
       },
     },
   },
@@ -76,12 +76,12 @@ const routes = (handler) => [
   // for creating an admin
   {
     method: "POST",
-    path: "/auth/create-admin",
+    path: "/admin/register",  
     handler: handler.postCreateAdminHandler,
     options: {
       auth: "jwt",
       validate: {
-        payload: AuthValidator.AdminRegisterPayloadSchema,
+        payload: AuthSchemas.UserRegisterPayloadSchema,  
       },
     },
   },
@@ -91,7 +91,7 @@ const routes = (handler) => [
     method: "POST",
     path: "/auth/forgot-password",
     handler: handler.postForgotPasswordHandler,
-    options: { validate: { payload: ForgotPasswordPayloadSchema } },
+    options: { validate: { payload: AuthSchemas.ForgotPasswordPayloadSchema } }, 
   },
 
   // for verifying reset password OTP
@@ -99,7 +99,7 @@ const routes = (handler) => [
     method: "POST",
     path: "/auth/verify-reset-otp",
     handler: handler.postVerifyResetOtpHandler,
-    options: { validate: { payload: VerifyResetOtpPayloadSchema } },
+    options: { validate: { payload: AuthSchemas.VerifyResetOtpPayloadSchema } },  
   },
 
   // for resetting password
@@ -107,7 +107,7 @@ const routes = (handler) => [
     method: "POST",
     path: "/auth/reset-password",
     handler: handler.postResetPasswordHandler,
-    options: { validate: { payload: ResetPasswordPayloadSchema } },
+    options: { validate: { payload: AuthSchemas.ResetPasswordPayloadSchema } }, 
   },
 
   // for user logout
@@ -115,7 +115,7 @@ const routes = (handler) => [
     method: "POST",
     path: "/auth/logout",
     handler: handler.postLogoutUserHandler,
-    options: { validate: { payload: LogoutPayloadSchema } },
+    options: { validate: { payload: AuthSchemas.LogoutPayloadSchema } },  
   },
 
   // for deleting user account
