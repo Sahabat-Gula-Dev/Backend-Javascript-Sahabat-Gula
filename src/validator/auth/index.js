@@ -8,6 +8,7 @@ import {
   VerifyResetOtpPayloadSchema,
   ResetPasswordPayloadSchema,
   LogoutPayloadSchema,
+  ResendOtpPayloadSchema
 } from "./schema.js";
 
 import InvariantError from "../../exceptions/InvariantError.js";
@@ -25,6 +26,11 @@ const AuthValidator = {
 
   validateVerifyOtpPayload: (payload) => {
     const { error } = VerifyOtpPayloadSchema.validate(payload);
+    if (error) throw new InvariantError(error.message);
+  },
+
+  validateResendOtpPayload: (payload) => {
+    const { error } = ResendOtpPayloadSchema.validate(payload);
     if (error) throw new InvariantError(error.message);
   },
 

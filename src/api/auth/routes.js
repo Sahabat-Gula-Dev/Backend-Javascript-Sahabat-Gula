@@ -7,8 +7,10 @@ const routes = (handler) => [
     path: "/auth/register",
     handler: handler.postRegisterUserHandler,
     options: {
+      description: "Register a new user",
+      tags: ["api", "auth"],
       validate: {
-        payload: AuthSchemas.UserRegisterPayloadSchema, 
+        payload: AuthSchemas.UserRegisterPayloadSchema,
       },
     },
   },
@@ -19,8 +21,24 @@ const routes = (handler) => [
     path: "/auth/verify-otp",
     handler: handler.postVerifyOtpHandler,
     options: {
+      description: "Verify OTP code to activate user account",
+      tags: ["api", "auth"],
       validate: {
-        payload: AuthSchemas.VerifyOtpPayloadSchema, 
+        payload: AuthSchemas.VerifyOtpPayloadSchema,
+      },
+    },
+  },
+
+  // for resending OTP
+  {
+    method: "POST",
+    path: "/auth/resend-otp",
+    handler: handler.postResendOtpHandler,
+    options: {
+      description: "Send a new OTP code to the user's email.",
+      tags: ["api", "auth"],
+      validate: {
+        payload: AuthSchemas.ResendOtpPayloadSchema,
       },
     },
   },
@@ -31,8 +49,10 @@ const routes = (handler) => [
     path: "/auth/login",
     handler: handler.postLoginUserHandler,
     options: {
+      description: "Login a user",
+      tags: ["api", "auth"],
       validate: {
-        payload: AuthSchemas.UserLoginPayloadSchema, 
+        payload: AuthSchemas.UserLoginPayloadSchema,
       },
     },
   },
@@ -43,8 +63,10 @@ const routes = (handler) => [
     path: "/auth/google",
     handler: handler.postGoogleAuthHandler,
     options: {
+      description: "Authenticate a user with Google",
+      tags: ["api", "auth"],
       validate: {
-        payload: AuthSchemas.GoogleAuthPayloadSchema, 
+        payload: AuthSchemas.GoogleAuthPayloadSchema,
       },
     },
   },
@@ -55,8 +77,10 @@ const routes = (handler) => [
     path: "/auth/refresh-token",
     handler: handler.postRefreshTokenHandler,
     options: {
+      description: "Refresh access token using refresh token",
+      tags: ["api", "auth"],
       validate: {
-        payload: AuthSchemas.RefreshTokenPayloadSchema, 
+        payload: AuthSchemas.RefreshTokenPayloadSchema,
       },
     },
   },
@@ -64,11 +88,13 @@ const routes = (handler) => [
   // for creating the first admin
   {
     method: "POST",
-    path: "/admin/register-first",  
+    path: "/admin/register-first",
     handler: handler.postCreateFirstAdminHandler,
     options: {
+      description: "Create the first admin user",
+      tags: ["api", "auth"],
       validate: {
-        payload: AuthSchemas.FirstAdminPayloadSchema,  
+        payload: AuthSchemas.FirstAdminPayloadSchema,
       },
     },
   },
@@ -76,12 +102,14 @@ const routes = (handler) => [
   // for creating an admin
   {
     method: "POST",
-    path: "/admin/register",  
+    path: "/admin/register",
     handler: handler.postCreateAdminHandler,
     options: {
+      description: "Create a new admin user",
+      tags: ["api", "auth"],
       auth: "jwt",
       validate: {
-        payload: AuthSchemas.UserRegisterPayloadSchema,  
+        payload: AuthSchemas.UserRegisterPayloadSchema,
       },
     },
   },
@@ -91,7 +119,10 @@ const routes = (handler) => [
     method: "POST",
     path: "/auth/forgot-password",
     handler: handler.postForgotPasswordHandler,
-    options: { validate: { payload: AuthSchemas.ForgotPasswordPayloadSchema } }, 
+    options: {
+      description: "Send a password reset email",
+      validate: { payload: AuthSchemas.ForgotPasswordPayloadSchema },
+    },
   },
 
   // for verifying reset password OTP
@@ -99,7 +130,10 @@ const routes = (handler) => [
     method: "POST",
     path: "/auth/verify-reset-otp",
     handler: handler.postVerifyResetOtpHandler,
-    options: { validate: { payload: AuthSchemas.VerifyResetOtpPayloadSchema } },  
+    options: {
+      description: "Verify reset password OTP",
+      validate: { payload: AuthSchemas.VerifyResetOtpPayloadSchema },
+    },
   },
 
   // for resetting password
@@ -107,7 +141,10 @@ const routes = (handler) => [
     method: "POST",
     path: "/auth/reset-password",
     handler: handler.postResetPasswordHandler,
-    options: { validate: { payload: AuthSchemas.ResetPasswordPayloadSchema } }, 
+    options: {
+      description: "Reset user password",
+      validate: { payload: AuthSchemas.ResetPasswordPayloadSchema },
+    },
   },
 
   // for user logout
@@ -115,7 +152,10 @@ const routes = (handler) => [
     method: "POST",
     path: "/auth/logout",
     handler: handler.postLogoutUserHandler,
-    options: { validate: { payload: AuthSchemas.LogoutPayloadSchema } },  
+    options: {
+      description: "Logout user",
+      validate: { payload: AuthSchemas.LogoutPayloadSchema },
+    },
   },
 
   // for deleting user account
@@ -124,10 +164,10 @@ const routes = (handler) => [
     path: "/users/me",
     handler: handler.deleteUserAccountHandler,
     options: {
+      description: "Delete user account",
+      tags: ["api", "auth"],
       auth: "jwt",
       description: "Delete user account successfully",
     },
   },
 ];
-
-export default routes;

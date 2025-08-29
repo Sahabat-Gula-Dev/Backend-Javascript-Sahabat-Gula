@@ -16,6 +16,10 @@ const VerifyOtpPayloadSchema = Joi.object({
   otp: Joi.string().length(6).required(),
 });
 
+const ResendOtpPayloadSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
 const GoogleAuthPayloadSchema = Joi.object({
   supabaseAccessToken: Joi.string().required(),
 });
@@ -51,6 +55,7 @@ export {
   VerifyOtpPayloadSchema,
   ForgotPasswordPayloadSchema,
   GoogleAuthPayloadSchema,
+  ResendOtpPayloadSchema,
   FirstAdminPayloadSchema,
   VerifyResetOtpPayloadSchema,
   ResetPasswordPayloadSchema,

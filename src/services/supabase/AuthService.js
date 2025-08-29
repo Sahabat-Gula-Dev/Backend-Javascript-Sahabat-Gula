@@ -129,6 +129,50 @@ class AuthService {
     return this._getUserProfile(user.id);
   }
 
+  async resendActivationOtp(email) {
+    const { data: users, error: findError } = await this._supabaseAdmin
+      .from("users")
+      .select("id")
+      .in("email", [email])
+      .limit(1);
+
+    if (findError || users.length === 0) {
+      throw new NotFoundError("User not found");
+    }
+    const user = users[0];
+    const { data: profile, error: profileError } = await this._supabaseAdmin
+      .from("profiles")
+      .select("is_active")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) throw new InvariantError("Failed to retrieve profile.");
+    if (profile.is_active) {
+      throw new InvariantError(
+        "This account is already active, no need to verify again."
+      );
+    }
+    const otp = otpGenerator.generate(6, {
+      upperCase: false,
+      specialChars: false,
+      lowerCaseAlphabets: false,
+    });
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 menit
+
+    const { error: updateError } = await this._supabaseAdmin
+      .from("profiles")
+      .update({ activation_otp: otp, activation_otp_expires_at: expiresAt })
+      .eq("id", user.id);
+    if (updateError) throw new InvariantError("Failed to save new OTP.");
+
+    await this._resend.emails.send({
+      from: "Sahabat Gula <noreply@sahabatgula.com>",
+      to: email,
+      subject: `Kode Aktivasi Akun Baru Anda: ${otp}`,
+      html: `<p>Gunakan kode baru ini untuk mengaktifkan akun Anda: <strong>${otp}</strong></p>`,
+    });
+  }
+
   async loginUser({ email, password }) {
     const {
       data: { user },
