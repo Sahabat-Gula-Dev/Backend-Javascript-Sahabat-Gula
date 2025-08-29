@@ -45,6 +45,14 @@ class AuthService {
   }
 
   async registerUser({ username, email, password }) {
+    const createUserOptions = {
+      email,
+      password,
+      email_confirm: false,
+      user_meta_data: { username: username },
+    };
+    console.log("Options yang dikirim ke Supabase:", createUserOptions);
+
     const {
       data: { user },
       error: createError,

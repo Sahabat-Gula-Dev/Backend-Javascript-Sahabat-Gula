@@ -19,6 +19,7 @@ class AuthHandler {
   }
 
   async postRegisterUserHandler(request, h) {
+    console.log(request.payload)
     const { username, email, password } = request.payload;
     await this._service.registerUser({ username, email, password });
     return h
