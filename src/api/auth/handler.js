@@ -18,7 +18,6 @@ class AuthHandler {
   }
 
   async postRegisterUserHandler(request, h) {
-    console.log(request.payload);
     const { username, email, password } = request.payload;
     await this._service.registerUser({ username, email, password });
     return h
@@ -31,6 +30,7 @@ class AuthHandler {
   }
 
   async postVerifyOtpHandler(request, h) {
+    console.log("Verify OTP payload:", request.payload);
     const userData = await this._service.verifyOtpAndActiveUser(
       request.payload
     );
@@ -72,8 +72,8 @@ class AuthHandler {
   }
 
   async postGoogleAuthHandler(request, h) {
-    const userData = await this._service.handleGoogleAuth(request.payload)
-      .supabaseAccessToken;
+    const { supabaseAccessToken } = request.payload;
+    const userData = await this._service.handleGoogleAuth(supabaseAccessToken);
     const accessToken = this._tokenManager.createAccessToken(userData);
     const refreshToken = this._tokenManager.createRefreshToken(userData);
     await this._service.saveRefreshToken(refreshToken, userData.id);
@@ -89,7 +89,7 @@ class AuthHandler {
 
   async postRefreshTokenHandler(request, h) {
     const { refreshToken } = request.payload;
-    await this._service.verifyRefreshTokenInDb(refreshToken);
+    const userId = await this._service.verifyRefreshTokenInDb(refreshToken);
     const userData = this._tokenManager.verifyRefreshToken(refreshToken);
     const newAccessToken = this._tokenManager.createAccessToken(userData);
     return {
