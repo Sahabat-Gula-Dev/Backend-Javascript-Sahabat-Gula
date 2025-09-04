@@ -1,63 +1,35 @@
 import Joi from "joi";
 
-const UserRegisterPayloadSchema = Joi.object({
+export const UserRegisterPayloadSchema = Joi.object({
   username: Joi.string().min(3).max(30).required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
 });
 
-const UserLoginPayloadSchema = Joi.object({
+export const UserLoginPayloadSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
 });
 
-const VerifyOtpPayloadSchema = Joi.object({
+export const VerifyOtpPayloadSchema = Joi.object({
   email: Joi.string().email().required(),
-  otp: Joi.string().length(6).required(),
+  otp: Joi.string().length(6).pattern(/^\d+$/).required(),
 });
 
-const ResendOtpPayloadSchema = Joi.object({
-  email: Joi.string().email().required(),
-});
-
-const GoogleAuthPayloadSchema = Joi.object({
-  supabaseAccessToken: Joi.string().required(),
-});
-
-const FirstAdminPayloadSchema = Joi.object({
-  username: Joi.string().required(),
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
-  adminKey: Joi.string().required(),
-});
-
-const ForgotPasswordPayloadSchema = Joi.object({
+export const ResendOtpPayloadSchema = Joi.object({
   email: Joi.string().email().required(),
 });
 
-const VerifyResetOtpPayloadSchema = Joi.object({
+export const ForgotPasswordPayloadSchema = Joi.object({
   email: Joi.string().email().required(),
-  otp: Joi.string().length(6).required(),
 });
 
-const ResetPasswordPayloadSchema = Joi.object({
+export const VerifyResetOtpPayloadSchema = Joi.object({
   email: Joi.string().email().required(),
+  otp: Joi.string().length(6).pattern(/^\d+$/).required(),
+});
+
+export const ResetPasswordPayloadSchema = Joi.object({
+  resetToken: Joi.string().required(),
   newPassword: Joi.string().min(6).required(),
 });
-
-const LogoutPayloadSchema = Joi.object({
-  email: Joi.string().email().required(),
-});
-
-export {
-  UserRegisterPayloadSchema,
-  UserLoginPayloadSchema,
-  VerifyOtpPayloadSchema,
-  ForgotPasswordPayloadSchema,
-  GoogleAuthPayloadSchema,
-  ResendOtpPayloadSchema,
-  FirstAdminPayloadSchema,
-  VerifyResetOtpPayloadSchema,
-  ResetPasswordPayloadSchema,
-  LogoutPayloadSchema,
-};

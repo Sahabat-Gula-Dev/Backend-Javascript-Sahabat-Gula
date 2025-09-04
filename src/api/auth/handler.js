@@ -1,7 +1,7 @@
-import AuthenticationError from "../../exceptions/AuthenticationError.js";
 import InvariantError from "../../exceptions/InvariantError.js";
+import AuthenticationError from "../../exceptions/AuthenticationError.js";
 
-class AuthHandler {
+export default class AuthHandler {
   constructor(service, tokenManager) {
     this._service = service;
     this._tokenManager = tokenManager;
@@ -10,11 +10,9 @@ class AuthHandler {
     this.postVerifyOtpHandler = this.postVerifyOtpHandler.bind(this);
     this.postResendOtpHandler = this.postResendOtpHandler.bind(this);
     this.postLoginUserHandler = this.postLoginUserHandler.bind(this);
-    this.postGoogleAuthHandler = this.postGoogleAuthHandler.bind(this);
-    this.postRefreshTokenHandler = this.postRefreshTokenHandler.bind(this);
-    this.postCreateFirstAdminHandler =
-      this.postCreateFirstAdminHandler.bind(this);
-    this.postCreateAdminHandler = this.postCreateAdminHandler.bind(this);
+    this.postForgotPasswordHandler = this.postForgotPasswordHandler.bind(this);
+    this.postVerifyResetOtpHandler = this.postVerifyResetOtpHandler.bind(this);
+    this.postResetPasswordHandler = this.postResetPasswordHandler.bind(this);
   }
 
   async postRegisterUserHandler(request, h) {
@@ -23,27 +21,23 @@ class AuthHandler {
     return h
       .response({
         status: "success",
-        message:
-          "User registered successfully. Please verify your email to activate your account.",
+        message: "Registrasi berhasil. Kode OTP telah dikirim ke email Anda.",
       })
       .code(201);
   }
 
   async postVerifyOtpHandler(request, h) {
-    console.log("Verify OTP payload:", request.payload);
-    const userData = await this._service.verifyOtpAndActiveUser(
-      request.payload
-    );
-    const accessToken = this._tokenManager.createAccessToken(userData);
-    const refreshToken = this._tokenManager.createRefreshToken(userData);
-    await this._service.saveRefreshToken(refreshToken, userData.id);
+    const user = await this._service.verifyOtpAndActivate(request.payload);
+    const accessToken = this._tokenManager.createAccessToken({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      username: user.username,
+    });
     return {
       status: "success",
-      message: "OTP verified successfully",
-      data: {
-        accessToken,
-        refreshToken,
-      },
+      message: "Verifikasi berhasil. Akun aktif.",
+      data: { accessToken },
     };
   }
 
@@ -52,79 +46,24 @@ class AuthHandler {
     await this._service.resendActivationOtp(email);
     return {
       status: "success",
-      message: "New OTP code has been sent to your email.",
+      message: "OTP baru telah dikirim ke email Anda.",
     };
   }
 
   async postLoginUserHandler(request, h) {
-    const userData = await this._service.loginUser(request.payload);
-    const accessToken = this._tokenManager.createAccessToken(userData);
-    const refreshToken = this._tokenManager.createRefreshToken(userData);
-    await this._service.saveRefreshToken(refreshToken, userData.id);
+    const { email, password } = request.payload;
+    const user = await this._service.login({ email, password });
+    const accessToken = this._tokenManager.createAccessToken({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      username: user.username,
+    });
     return {
       status: "success",
-      message: "Login successful",
-      data: {
-        accessToken,
-        refreshToken,
-      },
+      message: "Login berhasil.",
+      data: { accessToken },
     };
-  }
-
-  async postGoogleAuthHandler(request, h) {
-    const { supabaseAccessToken } = request.payload;
-    const userData = await this._service.handleGoogleAuth(supabaseAccessToken);
-    const accessToken = this._tokenManager.createAccessToken(userData);
-    const refreshToken = this._tokenManager.createRefreshToken(userData);
-    await this._service.saveRefreshToken(refreshToken, userData.id);
-    return {
-      status: "success",
-      message: "Google authentication successful",
-      data: {
-        accessToken,
-        refreshToken,
-      },
-    };
-  }
-
-  async postRefreshTokenHandler(request, h) {
-    const { refreshToken } = request.payload;
-    const userId = await this._service.verifyRefreshTokenInDb(refreshToken);
-    const userData = this._tokenManager.verifyRefreshToken(refreshToken);
-    const newAccessToken = this._tokenManager.createAccessToken(userData);
-    return {
-      status: "success",
-      message: "Token refreshed successfully",
-      data: {
-        accessToken: newAccessToken,
-      },
-    };
-  }
-
-  async postCreateFirstAdminHandler(request, h) {
-    const { adminKey, username, email, password } = request.payload;
-    if (adminKey !== process.env.SUPER_ADMIN_KEY) {
-      throw new AuthenticationError("Invalid admin key");
-    }
-    await this._service.createFirstAdmin({ username, email, password });
-    return h
-      .response({
-        status: "success",
-        message: "First admin created successfully",
-      })
-      .code(201);
-  }
-
-  async postCreateAdminHandler(request, h) {
-    const { username, email, password } = request.payload;
-    const actorId = request.auth.credentials.id;
-    await this._service.createAdmin(actorId, { username, email, password });
-    return h
-      .response({
-        status: "success",
-        message: "Admin created successfully",
-      })
-      .code(201);
   }
 
   async postForgotPasswordHandler(request, h) {
@@ -132,11 +71,12 @@ class AuthHandler {
     await this._service.requestPasswordReset(email);
     return {
       status: "success",
-      message: "Password reset email sent",
+      message: "OTP reset password telah dikirim ke email bila terdaftar.",
     };
   }
 
   async postVerifyResetOtpHandler(request, h) {
+    // Jika valid, kembalikan resetToken (JWT scope khusus)
     const { id } = await this._service.verifyPasswordResetOtp(request.payload);
     const resetToken = this._tokenManager.createAccessToken({
       id,
@@ -144,43 +84,21 @@ class AuthHandler {
     });
     return {
       status: "success",
-      message: "Reset token created successfully",
-      data: {
-        resetToken,
-      },
+      message: "OTP valid. Silakan reset password.",
+      data: { resetToken },
     };
   }
 
   async postResetPasswordHandler(request, h) {
     const { resetToken, newPassword } = request.payload;
-    const { id, scope } = this._tokenManager.verifyAccessToken(resetToken);
-    if (scope !== "reset-password") {
-      throw new InvariantError("Invalid token scope");
+    const payload = this._tokenManager.verifyAccessToken(resetToken);
+    if (payload.scope !== "reset-password") {
+      throw new InvariantError("Token reset tidak valid.");
     }
-    await this._service.resetPassword(id, newPassword);
+    await this._service.resetPassword(payload.id, newPassword);
     return {
       status: "success",
-      message: "Password reset successfully",
-    };
-  }
-
-  async postLogoutUserHandler(request, h) {
-    const { refreshToken } = request.payload;
-    await this._service.logoutUser(refreshToken);
-    return {
-      status: "success",
-      message: "User logged out successfully",
-    };
-  }
-
-  async deleteUserAccountHandler(request, h) {
-    const userId = request.auth.credentials.id;
-    await this._service.deleteUserAccount(userId);
-    return {
-      status: "success",
-      message: "User account deleted successfully",
+      message: "Password berhasil direset. Silakan login kembali.",
     };
   }
 }
-
-export default AuthHandler;
