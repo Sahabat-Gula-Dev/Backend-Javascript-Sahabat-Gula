@@ -1,5 +1,4 @@
 import InvariantError from "../../exceptions/InvariantError.js";
-import AuthenticationError from "../../exceptions/AuthenticationError.js";
 
 export default class AuthHandler {
   constructor(service, tokenManager) {
