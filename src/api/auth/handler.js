@@ -75,7 +75,7 @@ export default class AuthHandler {
   }
 
   async postVerifyResetOtpHandler(request, h) {
-    // Jika valid, kembalikan resetToken (JWT scope khusus)
+    // Jika valid, kembalikan resetToken  
     const { id } = await this._service.verifyPasswordResetOtp(request.payload);
     const resetToken = this._tokenManager.createAccessToken({
       id,

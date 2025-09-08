@@ -24,7 +24,6 @@ export default class GoogleAuthService {
   }
 
   async findOrCreateUser({ email, username }) {
-    // cek dulu apakah user sudah ada di auth.users
     const {
       data: { users },
       error: listError,
@@ -34,7 +33,6 @@ export default class GoogleAuthService {
 
     const existing = users.find((u) => u.email === email);
     if (existing) {
-      // ambil profile dari tabel profiles
       const { data: profile, error: profileError } = await this._supabaseAdmin
         .from("profiles")
         .select("id, username, email, role, is_active")
@@ -48,7 +46,6 @@ export default class GoogleAuthService {
       return profile;
     }
 
-    // kalau belum ada, buat user di auth.users
     const { data: newUser, error: createError } =
       await this._supabaseAdmin.auth.admin.createUser({
         email,
@@ -61,7 +58,6 @@ export default class GoogleAuthService {
         "Gagal membuat user auth: " + createError.message
       );
 
-    // trigger otomatis akan buat row di profiles
     return {
       id: newUser.user.id,
       email: newUser.user.email,

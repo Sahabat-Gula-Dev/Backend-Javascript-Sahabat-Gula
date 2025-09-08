@@ -20,7 +20,6 @@ export default class AuthService {
     this._resend = new Resend(process.env.RESEND_API_KEY);
   }
 
-  // ===== Utils =====
   _nowPlusMinutes(m) {
     return new Date(Date.now() + m * 60 * 1000);
   }
@@ -55,9 +54,7 @@ export default class AuthService {
     return profile;
   }
 
-  // ===== Register =====
   async registerUser({ username, email, password }) {
-    // Buat user Supabase; email_confirm: true supaya tidak kena error "Email not confirmed"
     const { data, error } = await this._supabaseAdmin.auth.admin.createUser({
       email,
       password,
@@ -112,13 +109,11 @@ export default class AuthService {
     }
 
     const user = data.user;
-    // Pastikan email terisi di profiles (jaga-jaga bila trigger custom lain)
     await this._supabaseAdmin
       .from("profiles")
       .update({ email })
       .eq("id", user.id);
 
-    // Kirim OTP aktivasi
     const otp = this._genOtp();
     const expiresAt = this._nowPlusMinutes(OTP_EXPIRE_MINUTES);
 
@@ -139,7 +134,6 @@ export default class AuthService {
     return { reused: false };
   }
 
-  // ===== Verify Activation OTP =====
   async verifyOtpAndActivate({ email, otp }) {
     const { data: profile, error } = await this._supabaseAdmin
       .from("profiles")
@@ -176,7 +170,6 @@ export default class AuthService {
     return this._getUserProfile(profile.id);
   }
 
-  // ===== Resend Activation OTP =====
   async resendActivationOtp(email) {
     const { data: profile, error } = await this._supabaseAdmin
       .from("profiles")
@@ -206,7 +199,6 @@ export default class AuthService {
     });
   }
 
-  // ===== Login =====
   async login({ email, password }) {
     const result = await this._supabase.auth.signInWithPassword({
       email,
@@ -237,7 +229,6 @@ export default class AuthService {
     return this._getUserProfile(user.id);
   }
 
-  // ===== Forgot Password (send reset OTP) =====
   async requestPasswordReset(email) {
     const { data: profile, error } = await this._supabaseAdmin
       .from("profiles")
@@ -268,7 +259,6 @@ export default class AuthService {
     return { ok: true };
   }
 
-  // ===== Verify Reset OTP (return userId) =====
   async verifyPasswordResetOtp({ email, otp }) {
     const { data: profile, error } = await this._supabaseAdmin
       .from("profiles")
@@ -290,7 +280,6 @@ export default class AuthService {
       throw new AuthenticationError("OTP telah kedaluwarsa.");
     }
 
-    // OTP single-use: hapus saat diverifikasi
     await this._supabaseAdmin
       .from("profiles")
       .update({ reset_otp: null, reset_otp_expires_at: null })
@@ -299,7 +288,6 @@ export default class AuthService {
     return { id: profile.id };
   }
 
-  // ===== Reset Password =====
   async resetPassword(userId, newPassword) {
     const { error } = await this._supabaseAdmin.auth.admin.updateUserById(
       userId,

@@ -3,8 +3,6 @@ import InvariantError from "../../exceptions/InvariantError.js";
 import NotFoundError from "../../exceptions/NotFoundError.js";
 import { Resend } from "resend";
 
-const OTP_EXPIRE_MINUTES = 5;
-
 export default class AdminAuthService {
   constructor() {
     this._supabaseAdmin = createClient(
@@ -24,7 +22,6 @@ export default class AdminAuthService {
     return data;
   }
 
-  // ===== Register Super Admin (only once) =====
   async registerSuperAdmin({ username, email, password }) {
     const { data: exists } = await this._supabaseAdmin
       .from("profiles")
@@ -55,7 +52,6 @@ export default class AdminAuthService {
     return this._getProfileById(data.user.id);
   }
 
-  // ===== Super Admin creates account (admin / user) =====
   async createAccount({ username, email, password, role }) {
     if (!["admin", "user"].includes(role)) {
       throw new InvariantError("Role tidak valid");
