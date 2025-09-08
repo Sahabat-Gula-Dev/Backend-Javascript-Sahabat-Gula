@@ -14,6 +14,10 @@ import AuthService from "./services/supabase/AuthService.js";
 import adminAuth from "./api/admin-auth/index.js";
 import AdminAuthService from "./services/supabase/AdminAuthService.js";
 
+// for google-auth
+import googleAuth from "./api/google-auth/index.js";
+import GoogleAuthService from "./services/supabase/GoogleAuthService.js";
+
 dotenv.config();
 
 const init = async () => {
@@ -29,6 +33,7 @@ const init = async () => {
 
   const authService = new AuthService();
   const adminAuthService = new AdminAuthService();
+  const googleAuthService = new GoogleAuthService();
 
   await server.register(HapiAuthJwt2);
 
@@ -68,6 +73,14 @@ const init = async () => {
     plugin: adminAuth,
     options: {
       service: adminAuthService,
+      tokenManager: TokenManager,
+    },
+  });
+
+  await server.register({
+    plugin: googleAuth,
+    options: {
+      service: googleAuthService,
       tokenManager: TokenManager,
     },
   });
