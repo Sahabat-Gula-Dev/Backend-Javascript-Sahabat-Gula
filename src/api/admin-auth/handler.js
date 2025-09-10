@@ -1,4 +1,3 @@
-
 export default class AdminAuthHandler {
   constructor(service, tokenManager) {
     this._service = service;

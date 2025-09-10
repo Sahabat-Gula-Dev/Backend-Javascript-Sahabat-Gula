@@ -10,9 +10,6 @@ const routes = (handler) => [
       tags: ["api", "admin-auth"],
       validate: {
         payload: AdminSchemas.RegisterSuperAdminPayloadSchema,
-        failAction: (request, h, err) => {
-          throw err;
-        },
       },
     },
   },
