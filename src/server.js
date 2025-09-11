@@ -18,6 +18,10 @@ import AdminAuthService from "./services/supabase/AdminAuthService.js";
 import googleAuth from "./api/google-auth/index.js";
 import GoogleAuthService from "./services/supabase/GoogleAuthService.js";
 
+// for profile
+import profile from "./api/profile/index.js";
+import ProfileService from "./services/supabase/ProfileService.js";
+
 dotenv.config();
 
 const init = async () => {
@@ -34,11 +38,12 @@ const init = async () => {
   const authService = new AuthService();
   const adminAuthService = new AdminAuthService();
   const googleAuthService = new GoogleAuthService();
+  const profileService = new ProfileService();
 
   await server.register(HapiAuthJwt2);
 
   server.auth.strategy("jwt", "jwt", {
-    keys: process.env.JWT_SECRET,
+    key: process.env.JWT_SECRET,
     validate: async (decoded, request, h) => {
       if (
         request.route.path.startsWith("/admin") &&
@@ -81,6 +86,14 @@ const init = async () => {
     plugin: googleAuth,
     options: {
       service: googleAuthService,
+      tokenManager: TokenManager,
+    },
+  });
+
+  await server.register({
+    plugin: profile,
+    options: {
+      service: profileService,
       tokenManager: TokenManager,
     },
   });
