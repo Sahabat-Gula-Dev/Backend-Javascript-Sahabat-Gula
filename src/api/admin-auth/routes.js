@@ -1,3 +1,4 @@
+import { auth } from "google-auth-library";
 import * as AdminSchemas from "../../validator/admin-auth/schema.js";
 
 const routes = (handler) => [
@@ -18,6 +19,10 @@ const routes = (handler) => [
     path: "/admin-auth/create-account",
     handler: handler.postCreateAccountHandler,
     options: {
+      auth: {
+        strategy: 'jwt',
+        scope: ['super-admin'],
+      },
       description: "Super admin membuat akun admin/user",
       tags: ["api", "admin-auth"],
       validate: { payload: AdminSchemas.CreateAccountPayloadSchema },

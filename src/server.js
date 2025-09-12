@@ -45,13 +45,6 @@ const init = async () => {
   server.auth.strategy("jwt", "jwt", {
     key: process.env.JWT_SECRET,
     validate: async (decoded, request, h) => {
-      if (
-        request.route.path.startsWith("/admin") &&
-        decoded.role !== "super_admin"
-      ) {
-        return { isValid: false };
-      }
-
       const user = await authService._getUserProfile(decoded.id);
       if (!user || !user.is_active) {
         return {
@@ -61,7 +54,7 @@ const init = async () => {
 
       return {
         isValid: true,
-        credentials: decoded,
+        credentials: {...decoded, scope:decoded.role},
       };
     },
   });
