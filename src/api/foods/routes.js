@@ -1,13 +1,12 @@
 import * as FoodSchemas from "../../validator/foods/schema.js";
 
 const routes = (handler) => [
-  // -------- FOODS (public-read: user/admin/super-admin) --------
   {
     method: "GET",
     path: "/foods",
     handler: handler.getFoodsHandler,
     options: {
-      description: "List & search foods",
+      description: "Menampilkan daftar makanan dengan pagination, search, dan filter",
       tags: ["api", "foods"],
       validate: { query: FoodSchemas.FoodQuerySchema },
     },
@@ -17,12 +16,11 @@ const routes = (handler) => [
     path: "/foods/{id}",
     handler: handler.getFoodByIdHandler,
     options: {
-      description: "Get food by id",
+      description: "Menampilkan makanan berdasarkan ID",
       tags: ["api", "foods"],
     },
   },
 
-  // -------- FOODS (write: admin & super-admin) --------
   {
     method: "POST",
     path: "/foods",
@@ -33,7 +31,7 @@ const routes = (handler) => [
         scope: ["super-admin", "admin"],
       },
       description:
-        "Create food (auto-create category if category_name provided)",
+        "Menambahkan makanan baru. Gambar makanan diunggah sebagai file multipart/form-data dengan field 'image'",
       tags: ["api", "foods"],
       payload: {
         output: "stream",
@@ -53,7 +51,7 @@ const routes = (handler) => [
         strategy: "jwt",
         scope: ["super-admin", "admin"],
       },
-      description: "Update food",
+      description: "Memperbarui data makanan berdasarkan ID. Gambar makanan diunggah sebagai file multipart/form-data dengan field 'image'",
       tags: ["api", "foods"],
       payload: {
         output: "stream",
@@ -73,18 +71,17 @@ const routes = (handler) => [
         strategy: "jwt",
         scope: ["super-admin", "admin"],
       },
-      description: "Delete food",
+      description: "Menghapus makanan berdasarkan ID",
       tags: ["api", "foods"],
     },
   },
 
-  // -------- CATEGORIES --------
   {
     method: "GET",
     path: "/food-categories",
     handler: handler.getCategoriesHandler,
     options: {
-      description: "List categories",
+      description: "Menampilkan daftar kategori makanan",
       tags: ["api", "foods"],
       validate: { query: FoodSchemas.CategoryQuerySchema },
     },
@@ -98,7 +95,7 @@ const routes = (handler) => [
         strategy: "jwt",
         scope: ["super-admin", "admin"],
       },
-      description: "Create category",
+      description: "Menambahkan kategori makanan baru",
       tags: ["api", "foods"],
       validate: { payload: FoodSchemas.CategoryCreateSchema },
     },
@@ -112,7 +109,7 @@ const routes = (handler) => [
         strategy: "jwt",
         scope: ["super-admin", "admin"],
       },
-      description: "Update category",
+      description: "Memperbarui kategori makanan berdasarkan ID",
       tags: ["api", "foods"],
       validate: { payload: FoodSchemas.CategoryUpdateSchema },
     },
@@ -126,7 +123,7 @@ const routes = (handler) => [
         strategy: "jwt",
         scope: ["super-admin", "admin"],
       },
-      description: "Delete category",
+      description: "Menghapus kategori makanan berdasarkan ID",
       tags: ["api", "foods"],
     },
   },

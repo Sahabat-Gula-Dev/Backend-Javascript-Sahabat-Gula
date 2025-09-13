@@ -16,10 +16,10 @@ export const FoodQuerySchema = Joi.object({
 export const FoodCreateSchema = Joi.object({
   name: Joi.string().max(200).required(),
   photo_url: Joi.string().uri().allow(null, ""),
-  photo_file: Joi.any(),
+  photo_file: Joi.any(), 
   description: Joi.string().allow(null, ""),
   category_id: Joi.number().integer().min(1),
-  category_name: Joi.string().max(100), // auto-create if not exists
+  category_name: Joi.string().max(100),  
   serving_size: Joi.number().integer().min(1).required(),
   serving_unit: unitStr.allow(null, ""),
   weight_size: Joi.number().integer().min(1).required(),
@@ -32,7 +32,7 @@ export const FoodCreateSchema = Joi.object({
   sodium: Joi.number().precision(2).allow(null),
   fiber: Joi.number().precision(2).allow(null),
   potassium: Joi.number().precision(2).allow(null),
-}).xor("category_id", "category_name"); // salah satu saja cukup
+}).xor("category_id", "category_name");  
 
 export const FoodUpdateSchema = Joi.object({
   name: Joi.string().max(200),
@@ -40,7 +40,7 @@ export const FoodUpdateSchema = Joi.object({
   photo_file: Joi.any(),
   description: Joi.string().allow(null, ""),
   category_id: Joi.number().integer().min(1),
-  category_name: Joi.string().max(100), // auto-create if not exists
+  category_name: Joi.string().max(100),  
   serving_size: Joi.number().integer().min(1),
   serving_unit: unitStr.allow(null, ""),
   weight_size: Joi.number().integer().min(1),

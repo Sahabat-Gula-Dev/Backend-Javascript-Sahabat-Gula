@@ -11,7 +11,6 @@ export default class FoodService {
     );
   }
 
-  // ================= CATEGORY =================
   async _getCategoryById(id) {
     const { data, error } = await this._supabaseAdmin
       .from("food_categories")
@@ -128,7 +127,6 @@ export default class FoodService {
     return;
   }
 
-  // ================= FOODS =================
   async _uploadPhoto(file) {
     const fileExt = file.hapi.filename.split(".").pop();
     const fileName = `${crypto.randomUUID()}.${fileExt}`;
@@ -174,11 +172,11 @@ export default class FoodService {
     if (category_id) {
       query = query.eq("category_id", category_id);
     } else if (category_name) {
-      const cat = await this._getCategoryByName(category_name);
-      if (!cat) {
+      const category = await this._getCategoryByName(category_name);
+      if (!category) {
         return { data: [], meta: { page, limit, total: 0 } };
       }
-      query = query.eq("category_id", cat.id);
+      query = query.eq("category_id", category.id);
     }
 
     if (sort) {
