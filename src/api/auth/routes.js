@@ -3,7 +3,7 @@ import * as AuthSchemas from "../../validator/auth/schema.js";
 const routes = (handler) => [
   {
     method: "POST",
-    path: "/auth/register",
+    path: "/register",
     handler: handler.postRegisterUserHandler,
     options: {
       description: "Register user baru & kirim OTP aktivasi",
@@ -13,7 +13,7 @@ const routes = (handler) => [
   },
   {
     method: "POST",
-    path: "/auth/verify-otp",
+    path: "/verify-otp",
     handler: handler.postVerifyOtpHandler,
     options: {
       description: "Verifikasi OTP aktivasi dan aktifkan akun",
@@ -23,7 +23,7 @@ const routes = (handler) => [
   },
   {
     method: "POST",
-    path: "/auth/resend-otp",
+    path: "/resend-otp",
     handler: handler.postResendOtpHandler,
     options: {
       description: "Kirim ulang OTP aktivasi",
@@ -33,7 +33,7 @@ const routes = (handler) => [
   },
   {
     method: "POST",
-    path: "/auth/login",
+    path: "/login",
     handler: handler.postLoginUserHandler,
     options: {
       description: "Login user",
@@ -43,7 +43,7 @@ const routes = (handler) => [
   },
   {
     method: "POST",
-    path: "/auth/forgot-password",
+    path: "/forgot-password",
     handler: handler.postForgotPasswordHandler,
     options: {
       description: "Kirim OTP reset password bila email terdaftar",
@@ -53,7 +53,7 @@ const routes = (handler) => [
   },
   {
     method: "POST",
-    path: "/auth/verify-reset-otp",
+    path: "/verify-reset-otp",
     handler: handler.postVerifyResetOtpHandler,
     options: {
       description: "Verifikasi OTP reset password dan terbitkan resetToken",
@@ -63,7 +63,7 @@ const routes = (handler) => [
   },
   {
     method: "POST",
-    path: "/auth/reset-password",
+    path: "/reset-password",
     handler: handler.postResetPasswordHandler,
     options: {
       description: "Reset password dengan resetToken yang valid",

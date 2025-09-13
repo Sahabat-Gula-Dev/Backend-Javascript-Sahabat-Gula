@@ -22,6 +22,10 @@ import GoogleAuthService from "./services/supabase/GoogleAuthService.js";
 import profile from "./api/profile/index.js";
 import ProfileService from "./services/supabase/ProfileService.js";
 
+// for data makanan (foods)
+import foods from "./api/foods/index.js";
+import FoodService from "./services/supabase/FoodService.js";
+
 dotenv.config();
 
 const init = async () => {
@@ -39,6 +43,7 @@ const init = async () => {
   const adminAuthService = new AdminAuthService();
   const googleAuthService = new GoogleAuthService();
   const profileService = new ProfileService();
+  const foodsService = new FoodService();
 
   await server.register(HapiAuthJwt2);
 
@@ -54,7 +59,7 @@ const init = async () => {
 
       return {
         isValid: true,
-        credentials: {...decoded, scope:decoded.role},
+        credentials: { ...decoded, scope: decoded.role },
       };
     },
   });
@@ -91,6 +96,14 @@ const init = async () => {
     },
   });
 
+  await server.register({
+    plugin: foods,
+    options: {
+      service: foodsService,
+      tokenManager: TokenManager,
+    },
+  });
+
   server.ext("onPreResponse", (request, h) => {
     const response = request.response;
 
@@ -120,7 +133,6 @@ const init = async () => {
         })
         .code(500);
     }
-
     return h.continue;
   });
 

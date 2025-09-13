@@ -3,7 +3,7 @@ import * as GoogleSchemas from "../../validator/google-auth/schema.js";
 const routes = (handler) => [
   {
     method: "POST",
-    path: "/auth/google",
+    path: "/google",
     handler: handler.postGoogleAuthHandler,
     options: {
       description: "Login user dengan Google ID Token",

@@ -4,7 +4,7 @@ import * as AdminSchemas from "../../validator/admin-auth/schema.js";
 const routes = (handler) => [
   {
     method: "POST",
-    path: "/admin-auth/register-super-admin",
+    path: "/register-super-admin",
     handler: handler.postRegisterSuperAdminHandler,
     options: {
       description: "Register super admin (hanya sekali)",
@@ -16,7 +16,7 @@ const routes = (handler) => [
   },
   {
     method: "POST",
-    path: "/admin-auth/create-account",
+    path: "/create-account",
     handler: handler.postCreateAccountHandler,
     options: {
       auth: {

@@ -3,7 +3,7 @@ import * as ProfileSchemas from "../../validator/profile/schema.js";
 const routes = (handler) => [
   {
     method: "POST",
-    path: "/profiles/setup",
+    path: "/setup",
     handler: handler.postSetupProfileHandler,
     options: {
       auth: "jwt",
@@ -16,7 +16,7 @@ const routes = (handler) => [
   },
   {
     method: "GET",
-    path: "/profiles/me",
+    path: "/me",
     handler: handler.getMyProfileSetupHandler,
     options: {
       auth: "jwt",
