@@ -26,6 +26,34 @@ import ProfileService from "./services/supabase/ProfileService.js";
 import foods from "./api/foods/index.js";
 import FoodService from "./services/supabase/FoodService.js";
 
+// for aktivitas (activities)
+import activities from "./api/activities/index.js";
+import ActivityService from "./services/supabase/ActivityService.js";
+
+// for informations
+import informations from "./api/informations/index.js";
+import InformationService from "./services/supabase/InformationService.js";
+
+// for tips
+import tips from "./api/tips/index.js";
+import TipsService from "./services/supabase/TipsService.js";
+
+// for faqs
+import faqs from "./api/faqs/index.js";
+import FaqService from "./services/supabase/FaqService.js";
+
+// for carousels
+import carousels from "./api/carousels/index.js";
+import CarouselService from "./services/supabase/CarouselService.js";
+
+// for articles
+import articles from "./api/articles/index.js";
+import ArticleService from "./services/supabase/ArticleService.js";
+
+// for events
+import events from "./api/events/index.js";
+import EventService from "./services/supabase/EventService.js";
+
 dotenv.config();
 
 const init = async () => {
@@ -44,6 +72,13 @@ const init = async () => {
   const googleAuthService = new GoogleAuthService();
   const profileService = new ProfileService();
   const foodsService = new FoodService();
+  const activitiesService = new ActivityService();
+  const informationService = new InformationService();
+  const tipsService = new TipsService();
+  const faqService = new FaqService();
+  const carouselService = new CarouselService();
+  const articleService = new ArticleService();
+  const eventService = new EventService();
 
   await server.register(HapiAuthJwt2);
 
@@ -100,6 +135,62 @@ const init = async () => {
     plugin: foods,
     options: {
       service: foodsService,
+      tokenManager: TokenManager,
+    },
+  });
+
+  await server.register({
+    plugin: activities,
+    options: {
+      service: activitiesService,
+      tokenManager: TokenManager,
+    },
+  });
+
+  await server.register({
+    plugin: tips,
+    options: {
+      service: tipsService,
+      tokenManager: TokenManager,
+    },
+  });
+
+  await server.register({
+    plugin: informations,
+    options: {
+      service: informationService,
+      tokenManager: TokenManager,
+    },
+  });
+
+  await server.register({
+    plugin: faqs,
+    options: {
+      service: faqService,
+      tokenManager: TokenManager,
+    },
+  });
+
+  await server.register({
+    plugin: carousels,
+    options: {
+      service: carouselService,
+      tokenManager: TokenManager,
+    },
+  });
+
+  await server.register({
+    plugin: articles,
+    options: {
+      service: articleService,
+      tokenManager: TokenManager,
+    },
+  });
+
+  await server.register({
+    plugin: events,
+    options: {
+      service: eventService,
       tokenManager: TokenManager,
     },
   });
