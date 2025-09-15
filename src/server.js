@@ -54,6 +54,10 @@ import ArticleService from "./services/supabase/ArticleService.js";
 import events from "./api/events/index.js";
 import EventService from "./services/supabase/EventService.js";
 
+// for predictions
+import predictions from "./api/predictions/index.js";
+import PredictionService from "./services/supabase/PredictionService.js";
+
 dotenv.config();
 
 const init = async () => {
@@ -79,6 +83,7 @@ const init = async () => {
   const carouselService = new CarouselService();
   const articleService = new ArticleService();
   const eventService = new EventService();
+  const predictionService = new PredictionService(foodsService);
 
   await server.register(HapiAuthJwt2);
 
@@ -191,6 +196,14 @@ const init = async () => {
     plugin: events,
     options: {
       service: eventService,
+      tokenManager: TokenManager,
+    },
+  });
+
+  await server.register({
+    plugin: predictions,
+    options: {
+      service: predictionService,
       tokenManager: TokenManager,
     },
   });
