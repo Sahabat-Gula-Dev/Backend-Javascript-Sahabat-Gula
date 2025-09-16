@@ -34,14 +34,12 @@ export default class PredictionService {
   }
 
   async predict(file) {
-    // 1. Siapkan form-data
     const formData = new FormData();
     formData.append("image", file._data, {
       filename: file.hapi.filename || "photo.jpg",
       contentType: file.hapi.headers["content-type"] || "image/jpeg",
     });
 
-    // 2. Request ke API model pakai axios
     let result;
     try {
       const res = await axios.post(this._modelEndpoint, formData, {
@@ -60,10 +58,8 @@ export default class PredictionService {
       throw new NotFoundError("Model tidak mengembalikan hasil yang valid");
     }
 
-    // 3. Kalau sukses prediksi, baru upload ke Supabase
     const { url } = await this._uploadImage(file);
 
-    // 4. Query foods berdasarkan best.name
     const foods = await this._foodService.listFoods({
       q: result.best.name,
       page: 1,
