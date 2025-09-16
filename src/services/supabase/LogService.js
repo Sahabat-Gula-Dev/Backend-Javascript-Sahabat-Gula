@@ -1,6 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
 import InvariantError from "../../exceptions/InvariantError.js";
-import NotFoundError from "../../exceptions/NotFoundError.js";
 
 export default class LogService {
   constructor() {

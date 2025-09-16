@@ -62,6 +62,10 @@ import PredictionService from "./services/supabase/PredictionService.js";
 import logs from "./api/logs/index.js";
 import LogService from "./services/supabase/LogService.js";
 
+// for summary
+import summary from "./api/summary/index.js";
+import SummaryService from "./services/supabase/SummaryService.js";
+
 dotenv.config();
 
 const init = async () => {
@@ -89,6 +93,7 @@ const init = async () => {
   const eventService = new EventService();
   const predictionService = new PredictionService(foodsService);
   const logService = new LogService();
+  const summaryService = new SummaryService();
 
   await server.register(HapiAuthJwt2);
 
@@ -217,6 +222,14 @@ const init = async () => {
     plugin: logs,
     options: {
       service: logService,
+      tokenManager: TokenManager,
+    },
+  });
+
+  await server.register({
+    plugin: summary,
+    options: {
+      service: summaryService,
       tokenManager: TokenManager,
     },
   });
