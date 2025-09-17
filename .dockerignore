@@ -1,0 +1,15 @@
+# Abaikan folder dependencies, karena akan di-install di dalam container
+node_modules
+
+# Abaikan file environment, karena akan disuntikkan saat runtime
+.env
+docker.env
+*.env
+
+# Abaikan file log
+*.log
+
+# Abaikan folder Git dan file konfigurasi lainnya
+.git
+.gitignore
+README.md

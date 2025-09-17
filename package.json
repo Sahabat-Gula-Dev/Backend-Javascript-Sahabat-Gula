@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
-    "start-dev": "nodemon src/server.js"
+    "start-dev": "nodemon src/server.js",
+    "test": "lab -v -m 100000"
   },
   "keywords": [],
   "author": "",
@@ -25,5 +26,10 @@
     "nodemon": "^3.1.10",
     "otp-generator": "^4.0.1",
     "resend": "^6.0.1"
+  },
+  "devDependencies": {
+    "@hapi/code": "^9.0.3",
+    "@hapi/lab": "^26.0.0",
+    "c8": "^10.1.3"
   }
 }

@@ -68,10 +68,10 @@ import SummaryService from "./services/supabase/SummaryService.js";
 
 dotenv.config();
 
-const init = async () => {
+export const createServer = async () => {
   const server = Hapi.server({
     port: process.env.PORT || 3000,
-    host: "localhost",
+    host: "0.0.0.0",
     routes: {
       cors: {
         origin: ["*"],
@@ -266,8 +266,14 @@ const init = async () => {
     return h.continue;
   });
 
-  await server.start();
-  console.log(`Server is running on ${server.info.uri}`);
+  return server;
 };
 
-init();
+if (process.env.NODE_ENV !== "test") {
+  const init = async () => {
+    const server = await createServer();
+    await server.start();
+    console.log(`Server is running on ${server.info.uri}`);
+  };
+  init();
+}
