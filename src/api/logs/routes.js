@@ -3,7 +3,7 @@ import * as LogSchemas from "../../validator/logs/schema.js";
 const routes = (handler) => [
   {
     method: "POST",
-    path: "/logs/foods",
+    path: "/log-foods",
     handler: handler.postFoodLogsHandler,
     options: {
       auth: { strategy: "jwt", scope: ["user"] },
@@ -14,7 +14,7 @@ const routes = (handler) => [
   },
   {
     method: "POST",
-    path: "/logs/activities",
+    path: "/log-activities",
     handler: handler.postActivityLogsHandler,
     options: {
       auth: { strategy: "jwt", scope: ["user"] },
@@ -25,7 +25,7 @@ const routes = (handler) => [
   },
   {
     method: "POST",
-    path: "/logs/steps",
+    path: "/log-steps",
     handler: handler.postStepLogsHandler,
     options: {
       auth: { strategy: "jwt", scope: ["user"] },
@@ -36,7 +36,7 @@ const routes = (handler) => [
   },
   {
     method: "POST",
-    path: "/logs/water",
+    path: "/log-water",
     handler: handler.postWaterLogsHandler,
     options: {
       auth: { strategy: "jwt", scope: ["user"] },

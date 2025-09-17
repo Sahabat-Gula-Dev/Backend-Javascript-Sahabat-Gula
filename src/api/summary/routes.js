@@ -1,7 +1,7 @@
 const routes = (handler) => [
   {
     method: "GET",
-    path: "/summary/today",
+    path: "/daily-summary",
     handler: handler.getTodayHandler,
     options: {
       auth: { strategy: "jwt", scope: ["user"] },
@@ -11,7 +11,7 @@ const routes = (handler) => [
   },
   {
     method: "GET",
-    path: "/summary/weekly",
+    path: "/weekly-summary",
     handler: handler.getWeeklyHandler,
     options: {
       auth: { strategy: "jwt", scope: ["user"] },
@@ -21,7 +21,7 @@ const routes = (handler) => [
   },
   {
     method: "GET",
-    path: "/summary/monthly",
+    path: "/monthly-summary",
     handler: handler.getMonthlyHandler,
     options: {
       auth: { strategy: "jwt", scope: ["user"] },
@@ -31,7 +31,7 @@ const routes = (handler) => [
   },
   {
     method: "GET",
-    path: "/summary/history",
+    path: "/history-log",
     handler: handler.getHistoryHandler,
     options: {
       auth: { strategy: "jwt", scope: ["user"] },
