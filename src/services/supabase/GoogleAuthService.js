@@ -1,5 +1,6 @@
 import { OAuth2Client } from "google-auth-library";
 import admin from "firebase-admin";
+import jwt from "jsonwebtoken";
 import { createClient } from "@supabase/supabase-js";
 import InvariantError from "../../exceptions/InvariantError.js";
 
