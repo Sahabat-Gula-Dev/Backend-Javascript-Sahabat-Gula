@@ -1,6 +1,5 @@
 import { OAuth2Client } from "google-auth-library";
 import admin from "firebase-admin";
-import jwt from "jsonwebtoken";
 import { createClient } from "@supabase/supabase-js";
 import InvariantError from "../../exceptions/InvariantError.js";
 
@@ -25,9 +24,7 @@ export default class GoogleAuthService {
 
   async verifyGoogleIdToken(idToken) {
     try {
-      const decodedRaw = jwt.decode(idToken, { complete: true });
       const decoded = await admin.auth().verifyIdToken(idToken);
-
       return decoded;
     } catch (error) {
       throw new InvariantError("Gagal memverifikasi Firebase ID Token");
