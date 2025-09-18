@@ -24,9 +24,15 @@ export default class GoogleAuthService {
 
   async verifyGoogleIdToken(idToken) {
     try {
+      const decodedRaw = jwt.decode(idToken, { complete: true });
+      console.log("🔍 Raw decoded header:", decodedRaw?.header);
+      console.log("🔍 Raw decoded payload:", decodedRaw?.payload);
+
       const decoded = await admin.auth().verifyIdToken(idToken);
+      console.log("✅ Firebase decoded:", decoded);
       return decoded;
     } catch (error) {
+      console.error("❌ Verify Firebase token error:", error);
       throw new InvariantError("Gagal memverifikasi Firebase ID Token");
     }
   }
