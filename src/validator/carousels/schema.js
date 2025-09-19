@@ -11,11 +11,11 @@ export const CarouselQuerySchema = Joi.object({
 export const CarouselCreateSchema = Joi.object({
   image_url: Joi.string().uri().allow(null, ""), 
   image_file: Joi.any(),  
-  target_url: Joi.string().uri().allow(null, ""),
+  target_url: Joi.string().uri().allow(null, "").optional(),
 });
 
 export const CarouselUpdateSchema = Joi.object({
   image_url: Joi.string().uri().allow(null, ""),
   image_file: Joi.any(),
-  target_url: Joi.string().uri().allow(null, ""),
+  target_url: Joi.string().uri().allow(null, "").optional(),
 }).min(1);
