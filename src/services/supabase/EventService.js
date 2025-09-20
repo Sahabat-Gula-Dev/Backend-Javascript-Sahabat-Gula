@@ -54,7 +54,7 @@ export default class EventService {
     return data;
   }
 
-  async listCategories({ q, page = 1, limit = 20 }) {
+  async listCategories({ q, page = 1 }) {
     const from = (page - 1) * limit;
     const to = from + limit - 1;
 
@@ -72,7 +72,7 @@ export default class EventService {
         "Gagal mendapatkan kategori event: " + error.message
       );
 
-    return { data, meta: { page, limit, total: count ?? 0 } };
+    return { data, meta: { page, total: count ?? 0 } };
   }
 
   async createCategory({ name }) {

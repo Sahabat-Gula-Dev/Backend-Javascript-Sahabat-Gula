@@ -51,7 +51,7 @@ export default class FaqService {
     return data;
   }
 
-  async listCategories({ q, page = 1, limit = 20 }) {
+  async listCategories({ q, page = 1 }) {
     const from = (page - 1) * limit;
     const to = from + limit - 1;
 
@@ -68,7 +68,7 @@ export default class FaqService {
       throw new InvariantError(
         "Gagal mendapatkan kategori FAQ: " + error.message
       );
-    return { data, meta: { page, limit, total: count ?? 0 } };
+    return { data, meta: { page, total: count ?? 0 } };
   }
 
   async createCategory({ name }) {
@@ -111,7 +111,6 @@ export default class FaqService {
       );
   }
 
-  /* FAQ CRUD */
   async listFaqs({
     q,
     category_id,
