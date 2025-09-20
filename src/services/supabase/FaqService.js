@@ -52,14 +52,12 @@ export default class FaqService {
   }
 
   async listCategories({ q, page = 1 }) {
-    const from = (page - 1) * limit;
-    const to = from + limit - 1;
+
 
     let query = this._supabaseAdmin
       .from("faq_categories")
       .select("id, name", { count: "exact" })
-      .order("id", { ascending: true })
-      .range(from, to);
+      .order("id", { ascending: true });
 
     if (q) query = query.ilike("name", `%${q}%`);
 

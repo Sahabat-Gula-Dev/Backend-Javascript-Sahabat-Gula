@@ -20,7 +20,8 @@ export default class InformationService {
         "Gagal mendapatkan daftar informations: " + error.message
       );
 
-    if (!data || data.length === 0) throw new NotFoundError("Information tidak ditemukan");
+    if (!data || data.length === 0)
+      throw new NotFoundError("Information tidak ditemukan");
 
     const randomIndex = Math.floor(Math.random() * data.length);
     return data[randomIndex];
