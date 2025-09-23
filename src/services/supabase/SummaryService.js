@@ -30,14 +30,8 @@ export default class SummaryService {
   }
 
   async _getSummaryByDate(userId, startDate, endDate) {
-    const tz = "Asia/Makassar";
-    const start = new Date(startDate + "T00:00:00");
-    const end = new Date(endDate + "T23:59:59");
-
-    const startStr =
-      start.toLocaleString("sv-SE", { timeZone: tz }).replace(" ", "T") + "Z";
-    const endStr =
-      end.toLocaleString("sv-SE", { timeZone: tz }).replace(" ", "T") + "Z";
+    const startStr = `${startDate}T00:00:00Z`;
+    const endStr = `${endDate}T23:59:59Z`;
 
     const { data: foodLogs, error: foodError } = await this._supabaseAdmin
       .from("food_consumption_logs")
@@ -180,7 +174,7 @@ export default class SummaryService {
     return results;
   }
 
-  // === Food & Activity history ===
+  
   async _getFoodLogsByDate(userId, date) {
     const { data, error } = await this._supabaseAdmin
       .from("food_consumption_logs")
