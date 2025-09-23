@@ -55,7 +55,7 @@ export default class ProfileService {
     const { data, error } = await this._supabaseAdmin
       .from("profiles")
       .select(
-        "id, username, email, bmi_score, risk_index, max_calories, max_carbs, max_protein, max_fat, max_sugar, max_natrium, max_fiber, max_potassium"
+        "id, username, email, bmi_score, risk_index, max_calories, max_carbs, max_protein, max_fat, max_sugar, max_sodium, max_fiber, max_potassium"
       )
       .eq("id", id)
       .single();

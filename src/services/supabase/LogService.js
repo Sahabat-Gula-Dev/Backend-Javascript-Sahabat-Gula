@@ -9,11 +9,20 @@ export default class LogService {
     );
   }
 
+  _nowLocal() {
+    return new Date()
+      .toLocaleString("sv-SE", { timeZone: "Asia/Makassar" })
+      .replace(" ", "T");
+  }
+
   async logFoods(userId, foods) {
+    const now = this._nowLocal();
+
     const inserts = foods.map((f) => ({
       user_id: userId,
       food_id: f.food_id,
       portion: f.portion ?? 1,
+      logged_at: now,
     }));
 
     const { data, error } = await this._supabaseAdmin
@@ -81,9 +90,12 @@ export default class LogService {
   }
 
   async logActivities(userId, activities) {
+    const now = this._nowLocal();
+
     const inserts = activities.map((a) => ({
       user_id: userId,
       activity_id: a.activity_id,
+      logged_at: now,
     }));
 
     const { data, error } = await this._supabaseAdmin
@@ -114,9 +126,11 @@ export default class LogService {
   }
 
   async logSteps(userId, steps) {
+    const now = this._nowLocal();
+
     const { data, error } = await this._supabaseAdmin
       .from("step_logs")
-      .insert({ user_id: userId, steps })
+      .insert({ user_id: userId, steps, logged_at: now })
       .select("id, steps, logged_at")
       .single();
 
@@ -127,9 +141,11 @@ export default class LogService {
   }
 
   async logWater(userId, amount) {
+    const now = this._nowLocal();
+
     const { data, error } = await this._supabaseAdmin
       .from("water_logs")
-      .insert({ user_id: userId, amount })
+      .insert({ user_id: userId, amount, logged_at: now })
       .select("id, amount, logged_at")
       .single();
 

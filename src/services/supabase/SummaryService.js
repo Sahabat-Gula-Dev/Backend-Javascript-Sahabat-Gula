@@ -9,7 +9,6 @@ export default class SummaryService {
     );
   }
 
-  // === Helpers ===
   _getLocalDate(date) {
     return new Date(date).toLocaleDateString("en-CA", {
       timeZone: "Asia/Makassar",
@@ -30,7 +29,6 @@ export default class SummaryService {
     return range;
   }
 
-  // === Summary per periode ===
   async _getSummaryByDate(userId, startDate, endDate) {
     const tz = "Asia/Makassar";
     const start = new Date(startDate + "T00:00:00");
@@ -41,7 +39,6 @@ export default class SummaryService {
     const endStr =
       end.toLocaleString("sv-SE", { timeZone: tz }).replace(" ", "T") + "Z";
 
-    // --- Food
     const { data: foodLogs, error: foodError } = await this._supabaseAdmin
       .from("food_consumption_logs")
       .select("portion, foods(*)")
@@ -76,10 +73,8 @@ export default class SummaryService {
       nutrients.potassium += (f.potassium ?? 0) * portion;
     });
 
-    // apply fix
     for (const key in nutrients) nutrients[key] = this._fix(nutrients[key]);
 
-    // --- Activity
     const { data: actLogs } = await this._supabaseAdmin
       .from("activity_logs")
       .select("activities(calories_burned)")
@@ -93,7 +88,6 @@ export default class SummaryService {
         0
       ) ?? 0;
 
-    // --- Steps
     const { data: stepsData } = await this._supabaseAdmin
       .from("step_logs")
       .select("steps")
@@ -103,7 +97,6 @@ export default class SummaryService {
 
     const steps = stepsData?.reduce((s, x) => s + x.steps, 0) ?? 0;
 
-    // --- Water
     const { data: waterData } = await this._supabaseAdmin
       .from("water_logs")
       .select("amount")
