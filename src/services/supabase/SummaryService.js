@@ -9,10 +9,8 @@ export default class SummaryService {
     );
   }
 
-  _getLocalDate(date) {
-    return new Date(date).toLocaleDateString("en-CA", {
-      timeZone: "Asia/Makassar",
-    });
+  _getUtcDate(date) {
+    return new Date(date).toISOString().split("T")[0];
   }
 
   _fix(val) {
@@ -101,7 +99,7 @@ export default class SummaryService {
     const water = waterData?.reduce((s, x) => s + x.amount, 0) ?? 0;
 
     return {
-      date: startDate,
+      date: startDate, // sudah UTC string (YYYY-MM-DD)
       nutrients,
       activities: { burned: this._fix(totalBurned) },
       steps,
@@ -110,7 +108,7 @@ export default class SummaryService {
   }
 
   async getTodaySummary(userId) {
-    const today = this._getLocalDate(new Date());
+    const today = this._getUtcDate(new Date());
     return this._getSummaryByDate(userId, today, today);
   }
 
@@ -123,7 +121,7 @@ export default class SummaryService {
     const results = [];
 
     for (const d of range) {
-      const dateStr = this._getLocalDate(d);
+      const dateStr = this._getUtcDate(d);
       const summary = await this._getSummaryByDate(userId, dateStr, dateStr);
       results.push(summary);
     }
@@ -136,17 +134,16 @@ export default class SummaryService {
     const results = [];
 
     for (let i = 6; i >= 0; i--) {
-      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-      const month = d
-        .toLocaleDateString("en-CA", { timeZone: "Asia/Makassar" })
-        .slice(0, 7);
+      const d = new Date(
+        Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - i, 1)
+      );
+      const month = d.toISOString().slice(0, 7); // YYYY-MM
 
       const start = `${month}-01`;
-      const end = new Date(
-        d.getFullYear(),
-        d.getMonth() + 1,
-        0
-      ).toLocaleDateString("en-CA", { timeZone: "Asia/Makassar" });
+      const endDate = new Date(
+        Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)
+      );
+      const end = this._getUtcDate(endDate);
 
       const summary = await this._getSummaryByDate(userId, start, end);
       summary.date = month;
@@ -164,7 +161,7 @@ export default class SummaryService {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
 
-      const dateStr = this._getLocalDate(d);
+      const dateStr = this._getUtcDate(d);
       const foods = await this._getFoodLogsByDate(userId, dateStr);
       const activities = await this._getActivityLogsByDate(userId, dateStr);
 
@@ -174,7 +171,6 @@ export default class SummaryService {
     return results;
   }
 
-  
   async _getFoodLogsByDate(userId, date) {
     const { data, error } = await this._supabaseAdmin
       .from("food_consumption_logs")
