@@ -10,6 +10,7 @@ export default class SummaryService {
   }
 
   _getUtcDate(date) {
+    // hanya ambil YYYY-MM-DD agar aman dipakai untuk range query
     return new Date(date).toISOString().split("T")[0];
   }
 
@@ -99,7 +100,7 @@ export default class SummaryService {
     const water = waterData?.reduce((s, x) => s + x.amount, 0) ?? 0;
 
     return {
-      date: startDate, // sudah UTC string (YYYY-MM-DD)
+      date: startDate,
       nutrients,
       activities: { burned: this._fix(totalBurned) },
       steps,
@@ -151,6 +152,14 @@ export default class SummaryService {
     }
 
     return results;
+  }
+
+  async getAllSummary(userId) {
+    const daily = await this.getTodaySummary(userId);
+    const weekly = await this.getWeeklySummary(userId);
+    const monthly = await this.getMonthlySummary(userId);
+
+    return { daily, weekly, monthly };
   }
 
   async getHistory(userId, limit = 3) {

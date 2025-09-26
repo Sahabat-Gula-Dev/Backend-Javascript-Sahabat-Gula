@@ -2,29 +2,17 @@ export default class SummaryHandler {
   constructor(service) {
     this._service = service;
 
-    this.getTodayHandler = this.getTodayHandler.bind(this);
-    this.getWeeklyHandler = this.getWeeklyHandler.bind(this);
-    this.getMonthlyHandler = this.getMonthlyHandler.bind(this);
-    this.getHistoryHandler = this.getHistoryHandler.bind(this);
+    this.getAllSummaryHandler = this.getAllSummaryHandler.bind(this);
   }
 
-  async getTodayHandler(request, h) {
+  async getAllSummaryHandler(request, h) {
     const { id: userId } = request.auth.credentials;
-    const data = await this._service.getTodaySummary(userId);
+    const data = await this._service.getAllSummary(userId);
 
-    return h.response({ status: "success", data }).code(200);
-  }
-
-  async getWeeklyHandler(request, h) {
-    const { id: userId } = request.auth.credentials;
-    const data = await this._service.getWeeklySummary(userId);
-    return { status: "success", data };
-  }
-
-  async getMonthlyHandler(request, h) {
-    const { id: userId } = request.auth.credentials;
-    const data = await this._service.getMonthlySummary(userId);
-    return { status: "success", data };
+    return {
+      status: "success",
+      data,
+    };
   }
 
   async getHistoryHandler(request, h) {

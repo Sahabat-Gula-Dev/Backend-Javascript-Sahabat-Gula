@@ -1,31 +1,11 @@
 const routes = (handler) => [
   {
     method: "GET",
-    path: "/daily-summary",
-    handler: handler.getTodayHandler,
+    path: "/summary",
+    handler: handler.getAllSummaryHandler,
     options: {
       auth: { strategy: "jwt", scope: ["user"] },
-      description: "Summary konsumsi hari ini",
-      tags: ["api", "summary"],
-    },
-  },
-  {
-    method: "GET",
-    path: "/weekly-summary",
-    handler: handler.getWeeklyHandler,
-    options: {
-      auth: { strategy: "jwt", scope: ["user"] },
-      description: "Summary 7 hari terakhir",
-      tags: ["api", "summary"],
-    },
-  },
-  {
-    method: "GET",
-    path: "/monthly-summary",
-    handler: handler.getMonthlyHandler,
-    options: {
-      auth: { strategy: "jwt", scope: ["user"] },
-      description: "Summary 7 bulan terakhir",
+      description: "Summary daily, weekly, monthly",
       tags: ["api", "summary"],
     },
   },
