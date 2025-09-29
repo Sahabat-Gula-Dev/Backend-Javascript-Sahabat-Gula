@@ -12,7 +12,7 @@ export default class PredictionHandler {
     return h
       .response({
         status: "success",
-        message: `Prediksi berhasil, hasil terbaik adalah ${result.predicted_name}`,
+        message: `Prediksi berhasil, hasil terbaik adalah ${result.predicted_name} dengan confidence ${result.predicted_confidence}`,
         data: result,
       })
       .code(201);

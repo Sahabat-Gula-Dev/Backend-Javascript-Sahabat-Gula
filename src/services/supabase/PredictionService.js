@@ -68,6 +68,7 @@ export default class PredictionService {
 
     return {
       predicted_name: result.best.name,
+      predicted_confidence: result.best.confidence,
       image_url: url,
       foods: foods.data,
       meta: foods.meta,
