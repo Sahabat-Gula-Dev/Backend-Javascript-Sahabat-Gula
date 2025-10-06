@@ -3,6 +3,7 @@ export default class SummaryHandler {
     this._service = service;
 
     this.getAllSummaryHandler = this.getAllSummaryHandler.bind(this);
+    this.getHistoryHandler = this.getHistoryHandler.bind(this);
   }
 
   async getAllSummaryHandler(request, h) {
