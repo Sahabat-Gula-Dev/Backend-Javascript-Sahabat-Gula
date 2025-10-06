@@ -66,6 +66,10 @@ import LogService from "./services/supabase/LogService.js";
 import summary from "./api/summary/index.js";
 import SummaryService from "./services/supabase/SummaryService.js";
 
+// for admin-summary
+import adminSummary from "./api/admin-summary/index.js";
+import AdminSummaryService from "./services/supabase/AdminSummaryService.js";
+
 dotenv.config();
 
 export const createServer = async () => {
@@ -94,6 +98,7 @@ export const createServer = async () => {
   const predictionService = new PredictionService(foodsService);
   const logService = new LogService();
   const summaryService = new SummaryService();
+  const adminSummaryService = new AdminSummaryService();
 
   await server.register(HapiAuthJwt2);
 
@@ -230,6 +235,14 @@ export const createServer = async () => {
     plugin: summary,
     options: {
       service: summaryService,
+      tokenManager: TokenManager,
+    },
+  });
+
+  await server.register({
+    plugin: adminSummary,
+    options: {
+      service: adminSummaryService,
       tokenManager: TokenManager,
     },
   });
