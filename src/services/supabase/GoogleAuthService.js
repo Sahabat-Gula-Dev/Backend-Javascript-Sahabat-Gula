@@ -65,6 +65,18 @@ export default class GoogleAuthService {
         "Gagal membuat user auth: " + createError.message
       );
 
+    await new Promise((r) => setTimeout(r, 500));
+
+    const { error: upErr } = await this._supabaseAdmin
+      .from("profiles")
+      .update({ is_active: true })
+      .eq("id", newUser.user.id);
+
+    if (upErr)
+      throw new InvariantError(
+        "Gagal mengaktifkan profile Google: " + upErr.message
+      );
+
     return {
       id: newUser.user.id,
       email: newUser.user.email,
