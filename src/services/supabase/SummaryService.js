@@ -10,7 +10,6 @@ export default class SummaryService {
   }
 
   _getUtcDate(date) {
-    // hanya ambil YYYY-MM-DD agar aman dipakai untuk range query
     return new Date(date).toISOString().split("T")[0];
   }
 
@@ -162,7 +161,7 @@ export default class SummaryService {
     return { daily, weekly, monthly };
   }
 
-  async getHistory(userId, limit = 3) {
+  async getHistory(userId, limit = 7) {
     const today = new Date();
     const results = [];
 
@@ -212,7 +211,7 @@ export default class SummaryService {
         weight_unit: f.foods.weight_unit,
         calories: this._fix((f.foods.calories ?? 0) * (f.portion ?? 1)),
         portion: f.portion ?? 1,
-        time: new Date(a.logged_at).toISOString(),
+        time: new Date(f.logged_at).toISOString(),
       })) ?? []
     );
   }
