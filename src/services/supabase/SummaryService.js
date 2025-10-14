@@ -212,7 +212,7 @@ export default class SummaryService {
         weight_unit: f.foods.weight_unit,
         calories: this._fix((f.foods.calories ?? 0) * (f.portion ?? 1)),
         portion: f.portion ?? 1,
-        time: f.logged_at,
+        time: new Date(a.logged_at).toISOString(),
       })) ?? []
     );
   }
@@ -246,7 +246,7 @@ export default class SummaryService {
         calories_burned: this._fix(a.activities.calories_burned),
         duration: a.activities.duration,
         duration_unit: a.activities.duration_unit,
-        time: a.logged_at,
+        time: new Date(a.logged_at).toISOString(),
       })) ?? []
     );
   }
